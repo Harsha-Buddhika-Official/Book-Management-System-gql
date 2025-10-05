@@ -76,11 +76,11 @@ PORT=your_preferred_port
 ```env
 # Local MongoDB
 MONGO_URI=mongodb://localhost:27017/your_database_name
-PORT=4000
+PORT=your_server_port
 
 # MongoDB Atlas (recommended for production)
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database_name
-PORT=4000
+PORT=your_server_port
 ```
 
 ### 4. Start MongoDB
@@ -101,7 +101,7 @@ npm start
 node server.js
 ```
 
-The GraphQL playground will be available at: `http://localhost:YOUR_PORT`
+The GraphQL playground will be available at your configured server address.
 
 ## 🔗 API Documentation
 
@@ -109,158 +109,41 @@ The GraphQL playground will be available at: `http://localhost:YOUR_PORT`
 
 #### Types
 
-**User Type**
-```graphql
-type user {
-  id: ID!
-  name: String!
-  email: String!
-  password: String!
-}
-```
-
-**Book Type**
-```graphql
-type book {
-  id: ID!
-  title: String!
-  author: String
-  year: Int
-  gener: String
-  image: String
-  description: String
-  language: String
-}
-```
+- **User**: Contains id, name, email, and password fields
+- **Book**: Contains id, title, author, year, genre, image, description, and language fields
 
 #### Input Types
 
-**Create User Input**
-```graphql
-input createUserInput {
-  name: String!
-  email: String!
-  password: String!
-  confirmPassword: String!
-}
-```
-
-**Create Book Input**
-```graphql
-input createBookInput {
-  title: String!
-  author: String
-  year: Int
-  gener: String
-  image: String
-  description: String
-  language: String
-}
-```
+- **createUserInput**: Required fields - name, email, password, confirmPassword
+- **createBookInput**: Required field - title; Optional - author, year, genre, image, description, language
 
 #### Queries
 
-```graphql
-# Get all users
-query GetUsers {
-  getUsers {
-    id
-    name
-    email
-  }
-}
-
-# Get user by ID
-query GetUserById($id: ID!) {
-  getUserById(id: $id) {
-    id
-    name
-    email
-  }
-}
-
-# Get all books
-query GetBooks {
-  getBooks {
-    id
-    title
-    author
-    year
-    gener
-  }
-}
-
-# Get book by ID
-query GetBookById($id: ID!) {
-  getBookById(id: $id) {
-    id
-    title
-    author
-    year
-    gener
-    description
-  }
-}
-```
+- **getUsers** - Retrieve all users
+- **getUserById(id)** - Get specific user by ID
+- **getBooks** - Retrieve all books
+- **getBookById(id)** - Get specific book by ID
+- **userCount** - Get total number of users
 
 #### Mutations
 
-```graphql
-# Create a new user
-mutation CreateUser($input: createUserInput!) {
-  createUser(input: $input) {
-    id
-    name
-    email
-  }
-}
-
-# Create a new book
-mutation CreateBook($input: createBookInput!) {
-  createBook(input: $input) {
-    id
-    title
-    author
-    year
-  }
-}
-```
+- **createUser** - Create a new user account with name, email, and password
+- **createBook** - Add a new book with title, author, year, genre, and other details
 
 ## 📝 Example Usage
 
-### Creating a User
-```graphql
-mutation {
-  createUser(input: {
-    name: "Your Name"
-    email: "your.email@example.com"
-    password: "yourSecurePassword"
-    confirmPassword: "yourSecurePassword"
-  }) {
-    id
-    name
-    email
-  }
-}
-```
+### Available Operations
+- **Create User**: `createUser(input: {name, email, password, confirmPassword})`
+- **Get Users**: `getUsers` - Returns list of all users
+- **Get User by ID**: `getUserById(id: "user_id")`
+- **Create Book**: `createBook(input: {title, author, year, genre, etc.})`
+- **Get Books**: `getBooks` - Returns list of all books
+- **Get Book by ID**: `getBookById(id: "book_id")`
 
-### Adding a Book
-```graphql
-mutation {
-  createBook(input: {
-    title: "The Great Gatsby"
-    author: "F. Scott Fitzgerald"
-    year: 1925
-    gener: "Fiction"
-    language: "English"
-    description: "A classic American novel"
-  }) {
-    id
-    title
-    author
-  }
-}
-```
+### Quick Start
+1. Access GraphQL Playground at your server URL
+2. Use the built-in schema explorer to see available operations
+3. Test queries and mutations directly in the playground
 
 ## 🐛 Troubleshooting
 
@@ -329,8 +212,8 @@ This project is licensed under the ISC License - see the `package.json` file for
 
 ## 👨‍💻 Author
 
-**Your Name**  
-GitHub: [@your-username](https://github.com/your-username)
+**Harsha**  
+GitHub: https://github.com/Harsha-Buddhika-Official/Book-Management-System-gql
 
 ---
 
