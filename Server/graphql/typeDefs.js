@@ -8,8 +8,19 @@ export const typeDefs = gql`
     confirmPassword: String!
   }
 
+  input createBookInput {
+    title: String!
+    author: String
+    year: Int
+    gener: String
+    image: String
+    description: String
+    language: String
+  }
+
   type Mutation {
     createUser(input: createUserInput): user
+    createBook(input: createBookInput): book
   }
 
   type user {
@@ -19,9 +30,21 @@ export const typeDefs = gql`
     password: String!
   }
 
+  type book {
+    id: ID!
+    title: String!
+    author: String
+    year: Int
+    gener: String
+    image: String
+    description: String
+    language: String
+  }
+
   type Query {
     getUsers: [user]
-    userCount: Int
+    getBooks: [book]
     getUserById(id: ID!): user!
+    getBookById(id: ID!): book!
   }
 `;

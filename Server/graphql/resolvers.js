@@ -1,3 +1,4 @@
+import { Book } from "../Model/book.js";
 import { User } from "../Model/user.js";
 
 export const resolvers = {
@@ -6,9 +7,9 @@ export const resolvers = {
       const users = await User.find();
       return users;
     },
-    userCount: async () => {
-      const count = await User.countDocuments();
-      return count;
+    getBooks: async () => {
+      const books = await Book.find();
+      return books;
     },
     getUserById: async (parent, args) => {
       const user = await User.findById(args.id);
@@ -16,6 +17,13 @@ export const resolvers = {
         throw new Error("User not found");
       }
       return user;
+    },
+    getBookById: async (_, args) => {
+      const book = await Book.findById(args.id);
+      if (!book) {
+        throw new Error("Book not found");
+      }
+      return book;
     },
   },
 
@@ -33,6 +41,21 @@ export const resolvers = {
       });
       const savedUser = await newUser.save();
       return savedUser;
+    },
+    createBook: async (_, args) => {
+      const book = args.input;
+
+      const newBook = new Book({
+        title: book.title,
+        author: book.author,
+        year: book.year,
+        gener: book.gener,
+        image: book.image,
+        description: book.description,
+        language: book.language,
+      });
+      const saveBook = await newBook.save();
+      return saveBook;
     },
   },
 };
