@@ -75,12 +75,12 @@ PORT=your_preferred_port
 **Example configuration:**
 ```env
 # Local MongoDB
-MONGO_URI=mongodb://localhost:27017/your_database_name
-PORT=your_server_port
+MONGO_URI=mongodb://localhost:27017/database_name
+PORT=server_port_number
 
-# MongoDB Atlas (recommended for production)
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database_name
-PORT=your_server_port
+# Cloud MongoDB (Atlas or other)
+MONGO_URI=your_cloud_mongodb_connection_string
+PORT=server_port_number
 ```
 
 ### 4. Start MongoDB
