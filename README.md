@@ -55,7 +55,7 @@ Book-Management-System-gql/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR-USERNAME/Book-Management-System-gql.git
+git clone https://github.com/Harsha-Buddhika-Official/Book-Management-System-gql.git
 cd Book-Management-System-gql
 ```
 
@@ -98,7 +98,7 @@ mongod
 npm start
 
 # Production mode
-node server.js
+nodemon
 ```
 
 The GraphQL playground will be available at your configured server address.
