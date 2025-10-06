@@ -71,7 +71,7 @@ export const resolvers = {
       if (!deletedBook) {
         throw new Error("Book not found");
       }
-      // return deletedBook;
+      return deletedBook;
     },
   },
 };
