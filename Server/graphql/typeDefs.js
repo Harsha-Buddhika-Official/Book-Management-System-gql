@@ -18,9 +18,21 @@ export const typeDefs = gql`
     language: String
   }
 
+  input updateBookInput {
+    title: String
+    author: String
+    year: Int
+    gener: String
+    image: String
+    description: String
+    language: String
+  }
+
   type Mutation {
     createUser(input: createUserInput): user
     createBook(input: createBookInput): book
+    updateBook(id: ID!, input: updateBookInput): book
+    deleteBook(id: ID!): book
   }
 
   type user {

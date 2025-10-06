@@ -11,7 +11,7 @@ export const resolvers = {
       const books = await Book.find();
       return books;
     },
-    getUserById: async (parent, args) => {
+    getUserById: async (_, args) => {
       const user = await User.findById(args.id);
       if (!user) {
         throw new Error("User not found");
@@ -28,7 +28,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createUser: async (parent, args) => {
+    createUser: async (_, args) => {
       const user = args.input;
       if (user.password !== user.confirmPassword) {
         throw new Error("Passwords do not match");
@@ -56,6 +56,22 @@ export const resolvers = {
       });
       const saveBook = await newBook.save();
       return saveBook;
+    },
+    updateBook: async (_, { id, input }) => {
+      const updatedBook = await Book.findByIdAndUpdate(id, input, {
+        new: true,
+      });
+      if (!updatedBook) {
+        throw new Error("Book not found");
+      }
+      return updatedBook;
+    },
+    deleteBook: async (_, {id}) => {
+      const deletedBook = await Book.findByIdAndDelete(id);
+      if (!deletedBook) {
+        throw new Error("Book not found");
+      }
+      // return deletedBook;
     },
   },
 };
