@@ -16,7 +16,6 @@ import {
   CardMedia,
   IconButton,
   InputAdornment,
-
 } from "@mui/material";
 import {
   ArrowBack,
@@ -25,6 +24,7 @@ import {
   Person,
   Category,
   DateRange,
+  PhotoCamera,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { bookGenres, bookLanguages } from "../data/booksData";
@@ -36,42 +36,78 @@ const AddBook = () => {
     title: "",
     author: "",
     year: "",
-    gener: "",
+    genre: "Fiction",
     image: "",
     description: "",
     language: "English",
   });
+  const bookGenres = [
+    "Fiction",
+    "Non-Fiction",
+    "Mystery",
+    "Romance",
+    "Science Fiction",
+    "Fantasy",
+    "Biography",
+    "History",
+    "Self-Help",
+    "Business",
+    "Technology",
+    "Health",
+    "Travel",
+    "Children",
+    "Young Adult",
+    "Poetry",
+    "Drama",
+    "Comedy",
+    "Horror",
+    "Thriller",
+    "Dystopian",
+  ];
+  const bookLanguages = [
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese",
+    "Japanese",
+    "Chinese",
+    "Korean",
+    "Russian",
+    "Arabic",
+  ];
   const [errors, setErrors] = useState({});
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
     }
-    
+
     if (!formData.author.trim()) {
       newErrors.author = "Author is required";
     }
-    
-    if (!formData.gener) {
-      newErrors.gener = "Genre is required";
+
+    if (!formData.genre) {
+      newErrors.genre = "Genre is required";
     }
-    
+
     if (!formData.year) {
       newErrors.year = "Year is required";
     } else {
@@ -84,25 +120,24 @@ const AddBook = () => {
     if (!formData.language) {
       newErrors.language = "Language is required";
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       // TODO: Implement actual API call here
       console.log("Book data:", formData);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       // Navigate back to book list on success
       navigate("/books");
     } catch (error) {
@@ -117,7 +152,13 @@ const AddBook = () => {
   };
 
   return (
-    <Box sx={{ backgroundColor: "background.default", minHeight: "calc(100vh - 64px)", py: 4 }}>
+    <Box
+      sx={{
+        backgroundColor: "background.default",
+        minHeight: "calc(100vh - 64px)",
+        py: 4,
+      }}
+    >
       <Container maxWidth="md">
         {/* Header */}
         <Box sx={{ mb: 4 }}>
@@ -159,7 +200,8 @@ const AddBook = () => {
                         image={formData.image}
                         alt="Book cover preview"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/200x280?text=No+Image";
+                          e.target.src =
+                            "https://via.placeholder.com/200x280?text=No+Image";
                         }}
                       />
                     </Card>
@@ -187,7 +229,7 @@ const AddBook = () => {
                     label="Cover Image URL"
                     name="image"
                     value={formData.image}
-                    onChange={handleUrlChange}
+                    onChange={handleInputChange}
                     placeholder="Enter image URL"
                     size="small"
                     sx={{ mt: 1 }}
@@ -257,14 +299,16 @@ const AddBook = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={!!errors.gener}>
+                    <FormControl fullWidth error={!!errors.genre}>
                       <InputLabel>Genre</InputLabel>
                       <Select
-                        name="gener"
-                        value={formData.gener}
+                        name="genre"
+                        value={formData.genre}
                         label="Genre"
                         onChange={handleInputChange}
-                        startAdornment={<Category sx={{ mr: 1, color: "action.active" }} />}
+                        startAdornment={
+                          <Category sx={{ mr: 1, color: "action.active" }} />
+                        }
                       >
                         {bookGenres.map((genre) => (
                           <MenuItem key={genre} value={genre}>
@@ -272,9 +316,13 @@ const AddBook = () => {
                           </MenuItem>
                         ))}
                       </Select>
-                      {errors.gener && (
-                        <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
-                          {errors.gener}
+                      {errors.genre && (
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ ml: 2, mt: 0.5 }}
+                        >
+                          {errors.genre}
                         </Typography>
                       )}
                     </FormControl>
@@ -296,16 +344,16 @@ const AddBook = () => {
                         ))}
                       </Select>
                       {errors.language && (
-                        <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ ml: 2, mt: 0.5 }}
+                        >
                           {errors.language}
                         </Typography>
                       )}
                     </FormControl>
                   </Grid>
-
-
-
-
 
                   <Grid item xs={12}>
                     <TextField
@@ -319,14 +367,22 @@ const AddBook = () => {
                       helperText="Brief description or summary of the book"
                     />
                   </Grid>
-
-
                 </Grid>
               </Grid>
             </Grid>
 
             {/* Action Buttons */}
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 4, pt: 3, borderTop: 1, borderColor: "divider" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                justifyContent: "flex-end",
+                mt: 4,
+                pt: 3,
+                borderTop: 1,
+                borderColor: "divider",
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={handleCancel}

@@ -49,7 +49,7 @@ export const resolvers = {
         title: book.title,
         author: book.author,
         year: book.year,
-        gener: book.gener,
+        genre: book.genre,
         image: book.image,
         description: book.description,
         language: book.language,

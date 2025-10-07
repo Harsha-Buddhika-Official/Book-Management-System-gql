@@ -12,7 +12,7 @@ export const typeDefs = gql`
     title: String!
     author: String
     year: Int
-    gener: String
+    genre: String
     image: String
     description: String
     language: String
@@ -22,7 +22,7 @@ export const typeDefs = gql`
     title: String
     author: String
     year: Int
-    gener: String
+    genre: String
     image: String
     description: String
     language: String
@@ -47,7 +47,7 @@ export const typeDefs = gql`
     title: String!
     author: String
     year: Int
-    gener: String
+    genre: String
     image: String
     description: String
     language: String

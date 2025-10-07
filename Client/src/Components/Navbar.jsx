@@ -12,8 +12,6 @@ import {
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
-import AddIcon from "@mui/icons-material/Add";
-import ListIcon from "@mui/icons-material/List";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -53,7 +51,7 @@ const Navbar = () => {
           >
             Book Management
           </Typography>
-          
+
           {/* Desktop Navigation */}
           <Box
             sx={{
@@ -62,10 +60,7 @@ const Navbar = () => {
               gap: 1,
             }}
           >
-            <Button
-              color="inherit"
-              onClick={() => navigate("/home")}
-            >
+            <Button color="inherit" onClick={() => navigate("/home")}>
               Home
             </Button>
             <Button
@@ -101,13 +96,21 @@ const Navbar = () => {
               open={open}
               onClose={handleMenuClose}
               MenuListProps={{
-                'aria-labelledby': 'basic-button',
+                "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={() => handleNavigate("/home")}>Home</MenuItem>
-              <MenuItem onClick={() => handleNavigate("/books")}>Books</MenuItem>
-              <MenuItem onClick={() => handleNavigate("/login")}>Logout</MenuItem>
-              <MenuItem onClick={() => handleNavigate("/signup")}>Sign Up</MenuItem>
+              <MenuItem onClick={() => handleNavigate("/home")}>
+                Home
+              </MenuItem>
+              <MenuItem onClick={() => handleNavigate("/books")}>
+                Books
+              </MenuItem>
+              <MenuItem onClick={() => handleNavigate("/login")}>
+                Logout
+              </MenuItem>
+              <MenuItem onClick={() => handleNavigate("/signup")}>
+                Sign Up
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

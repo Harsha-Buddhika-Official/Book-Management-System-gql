@@ -38,7 +38,7 @@ const EditBook = () => {
   const [formData, setFormData] = useState({
     title: "",
     author: "",
-    gener: "",
+    genre: "",
     year: "",
     description: "",
     language: "English",
@@ -51,7 +51,7 @@ const EditBook = () => {
     _id: "1",
     title: "The Great Gatsby",
     author: "F. Scott Fitzgerald",
-    gener: "Fiction",
+    genre: "Fiction",
     year: "1925",
     description: "A classic American novel about the Jazz Age and the American Dream.",
     language: "English",
@@ -106,8 +106,8 @@ const EditBook = () => {
       newErrors.author = "Author is required";
     }
     
-    if (!formData.gener) {
-      newErrors.gener = "Genre is required";
+    if (!formData.genre) {
+      newErrors.genre = "Genre is required";
     }
     
     if (!formData.year) {
@@ -331,11 +331,11 @@ const EditBook = () => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth error={!!errors.gener}>
+                    <FormControl fullWidth error={!!errors.genre}>
                       <InputLabel>Genre</InputLabel>
                       <Select
-                        name="gener"
-                        value={formData.gener}
+                        name="genre"
+                        value={formData.genre}
                         label="Genre"
                         onChange={handleInputChange}
                         startAdornment={<Category sx={{ mr: 1, color: "action.active" }} />}
@@ -346,9 +346,9 @@ const EditBook = () => {
                           </MenuItem>
                         ))}
                       </Select>
-                      {errors.gener && (
+                      {errors.genre && (
                         <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
-                          {errors.gener}
+                          {errors.genre}
                         </Typography>
                       )}
                     </FormControl>
