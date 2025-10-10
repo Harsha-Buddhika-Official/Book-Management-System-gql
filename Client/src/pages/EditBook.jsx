@@ -16,7 +16,6 @@ import {
   CardMedia,
   IconButton,
   InputAdornment,
-
   Skeleton,
 } from "@mui/material";
 import {
@@ -26,90 +25,80 @@ import {
   Person,
   Category,
   DateRange,
+  PhotoCamera,
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { bookGenres, bookLanguages } from "../data/booksData";
+import { GET_BOOK_BY_ID } from "../graphql/queries";
+import { useQuery, useMutation } from "@apollo/client";
+import { UPDATE_BOOK } from "../graphql/mutation";
 
 const EditBook = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [bookLoading, setBookLoading] = useState(true);
+  const [load, setLoading] = useState(false);
+  const { loading, error, data } = useQuery(GET_BOOK_BY_ID, {
+    variables: { getBookByIdId: id },
+    skip: !id,
+  });
+
   const [formData, setFormData] = useState({
     title: "",
     author: "",
     genre: "",
     year: "",
     description: "",
-    language: "English",
+    language: "",
     image: "",
   });
   const [errors, setErrors] = useState({});
 
-  // Mock book data for editing
-  const mockBook = {
-    _id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    genre: "Fiction",
-    year: "1925",
-    description: "A classic American novel about the Jazz Age and the American Dream.",
-    language: "English",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=400&fit=crop",
-  };
-
+  // Update form data when GraphQL query completes
   useEffect(() => {
-    // Simulate fetching book data
-    const fetchBook = async () => {
-      setBookLoading(true);
-      try {
-        // TODO: Replace with actual API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Simulate book data based on ID
-        setFormData(mockBook);
-      } catch (error) {
-        setErrors({ fetch: "Failed to load book data." });
-      } finally {
-        setBookLoading(false);
-      }
-    };
-
-    fetchBook();
-  }, [id]);
+    if (data && data.getBookById) {
+      const book = data.getBookById;
+      setFormData({
+        title: book.title || "",
+        author: book.author || "",
+        genre: book.genre || "",
+        year: book.year || "",
+        description: book.description || "",
+        language: book.language || "",
+        image: book.image || "",
+      });
+    }
+  }, [data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
 
-
-
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
     }
-    
+
     if (!formData.author.trim()) {
       newErrors.author = "Author is required";
     }
-    
+
     if (!formData.genre) {
       newErrors.genre = "Genre is required";
     }
-    
+
     if (!formData.year) {
       newErrors.year = "Year is required";
     } else {
@@ -118,29 +107,29 @@ const EditBook = () => {
         newErrors.year = "Please enter a valid year";
       }
     }
-    
+
     if (!formData.language) {
       newErrors.language = "Language is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       // TODO: Implement actual API call here
       console.log("Updated book data:", formData);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       // Navigate back to book list on success
       navigate("/books");
     } catch (error) {
@@ -154,19 +143,37 @@ const EditBook = () => {
     navigate(-1);
   };
 
-  if (bookLoading) {
+  const [updateBook, { loading: updating, error: updateError }] =
+    useMutation(UPDATE_BOOK);
+  if (loading) {
     return (
-      <Box sx={{ backgroundColor: "background.default", minHeight: "calc(100vh - 64px)", py: 4 }}>
+      <Box
+        sx={{
+          backgroundColor: "background.default",
+          minHeight: "calc(100vh - 64px)",
+          py: 4,
+        }}
+      >
         <Container maxWidth="md">
           <Box sx={{ mb: 4 }}>
-            <Skeleton variant="rectangular" width={100} height={36} sx={{ mb: 2 }} />
+            <Skeleton
+              variant="rectangular"
+              width={100}
+              height={36}
+              sx={{ mb: 2 }}
+            />
             <Skeleton variant="text" width={200} height={40} />
             <Skeleton variant="text" width={300} height={24} />
           </Box>
           <Paper sx={{ p: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={4}>
-                <Skeleton variant="rectangular" width={200} height={280} sx={{ mx: "auto" }} />
+                <Skeleton
+                  variant="rectangular"
+                  width={200}
+                  height={280}
+                  sx={{ mx: "auto" }}
+                />
               </Grid>
               <Grid item xs={12} md={8}>
                 <Grid container spacing={3}>
@@ -184,8 +191,50 @@ const EditBook = () => {
     );
   }
 
+  if (error) {
+    return (
+      <Box
+        sx={{
+          backgroundColor: "background.default",
+          minHeight: "calc(100vh - 64px)",
+          py: 4,
+        }}
+      >
+        <Container maxWidth="md">
+          <Box sx={{ mb: 4 }}>
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={() => navigate("/books")}
+              sx={{ mb: 2 }}
+            >
+              Back to Books
+            </Button>
+            <Typography variant="h4" fontWeight="bold" gutterBottom>
+              Error Loading Book
+            </Typography>
+          </Box>
+          <Alert severity="error">
+            Error loading book: {error.message}
+            {error.message.includes("Book not found") && (
+              <Box sx={{ mt: 2 }}>
+                The book you're trying to edit may have been deleted or the ID
+                is invalid.
+              </Box>
+            )}
+          </Alert>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ backgroundColor: "background.default", minHeight: "calc(100vh - 64px)", py: 4 }}>
+    <Box
+      sx={{
+        backgroundColor: "background.default",
+        minHeight: "calc(100vh - 64px)",
+        py: 4,
+      }}
+    >
       <Container maxWidth="md">
         {/* Header */}
         <Box sx={{ mb: 4 }}>
@@ -233,7 +282,8 @@ const EditBook = () => {
                         image={formData.image}
                         alt="Book cover preview"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/200x280?text=No+Image";
+                          e.target.src =
+                            "https://via.placeholder.com/200x280?text=No+Image";
                         }}
                       />
                     </Card>
@@ -338,7 +388,9 @@ const EditBook = () => {
                         value={formData.genre}
                         label="Genre"
                         onChange={handleInputChange}
-                        startAdornment={<Category sx={{ mr: 1, color: "action.active" }} />}
+                        startAdornment={
+                          <Category sx={{ mr: 1, color: "action.active" }} />
+                        }
                       >
                         {bookGenres.map((genre) => (
                           <MenuItem key={genre} value={genre}>
@@ -347,7 +399,11 @@ const EditBook = () => {
                         ))}
                       </Select>
                       {errors.genre && (
-                        <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ ml: 2, mt: 0.5 }}
+                        >
                           {errors.genre}
                         </Typography>
                       )}
@@ -370,14 +426,16 @@ const EditBook = () => {
                         ))}
                       </Select>
                       {errors.language && (
-                        <Typography variant="caption" color="error" sx={{ ml: 2, mt: 0.5 }}>
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{ ml: 2, mt: 0.5 }}
+                        >
                           {errors.language}
                         </Typography>
                       )}
                     </FormControl>
                   </Grid>
-
-
 
                   <Grid item xs={12}>
                     <TextField
@@ -391,28 +449,32 @@ const EditBook = () => {
                       helperText="Brief description or summary of the book"
                     />
                   </Grid>
-
-
                 </Grid>
               </Grid>
             </Grid>
 
             {/* Action Buttons */}
-            <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 4, pt: 3, borderTop: 1, borderColor: "divider" }}>
-              <Button
-                variant="outlined"
-                onClick={handleCancel}
-                disabled={loading}
-              >
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                justifyContent: "flex-end",
+                mt: 4,
+                pt: 3,
+                borderTop: 1,
+                borderColor: "divider",
+              }}
+            >
+              <Button variant="outlined" onClick={handleCancel} disabled={load}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="contained"
                 startIcon={<Save />}
-                disabled={loading}
+                disabled={load}
               >
-                {loading ? "Updating Book..." : "Update Book"}
+                {load ? "Updating Book..." : "Update Book"}
               </Button>
             </Box>
           </Box>
