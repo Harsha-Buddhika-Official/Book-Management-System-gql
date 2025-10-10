@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 const BookGrid = () => {
   const { loading, error, data } = useQuery(GET_BOOKS);
   const navigate = useNavigate();
+  
   const handleBookView = (id) => {
     navigate(`/books/view/${id}`);
   };
