@@ -28,7 +28,7 @@ const ViewBook = () => {
   });
 
   // Handler functions
-  const handleEdit = () => {
+  const handleEdit = (id) => {
     navigate(`/books/edit/${id}`);
   };
 
@@ -140,7 +140,7 @@ const ViewBook = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleEdit}
+                onClick={() => handleEdit(book.id)}
                 startIcon={<EditIcon />}
               >
                 Edit Book
