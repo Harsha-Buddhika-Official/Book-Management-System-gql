@@ -40,6 +40,16 @@ export const GET_BOOK_BY_ID = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query GetUserById($getUserByIdId: ID!) {
+    getUserById(id: $getUserByIdId) {
+      id
+      name
+      email
+    }
+  }
+`;
+
 export const DELETE_BOOK = gql`
   mutation Mutation($deleteBookId: ID!) {
     deleteBook(id: $deleteBookId) {

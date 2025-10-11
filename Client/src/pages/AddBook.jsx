@@ -27,11 +27,17 @@ import {
   PhotoCamera,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { ADD_BOOK } from "../graphql/mutation";
+import { GET_BOOKS } from "../graphql/queries";
 import { bookGenres, bookLanguages } from "../data/booksData";
 
 const AddBook = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [addBook] = useMutation(ADD_BOOK, {
+    refetchQueries: [{ query: GET_BOOKS }],
+  });
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -132,16 +138,25 @@ const AddBook = () => {
     setLoading(true);
 
     try {
-      // TODO: Implement actual API call here
-      console.log("Book data:", formData);
+      const bookInput = {
+        title: formData.title,
+        author: formData.author,
+        year: parseInt(formData.year),
+        genre: formData.genre,
+        image: formData.image,
+        description: formData.description,
+        language: formData.language,
+      };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await addBook({
+        variables: { input: bookInput }
+      });
 
       // Navigate back to book list on success
       navigate("/books");
     } catch (error) {
       setErrors({ submit: "Failed to add book. Please try again." });
+      console.error("Error adding book:", error);
     } finally {
       setLoading(false);
     }

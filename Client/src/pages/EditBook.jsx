@@ -124,16 +124,28 @@ const EditBook = () => {
     setLoading(true);
 
     try {
-      // TODO: Implement actual API call here
-      console.log("Updated book data:", formData);
+      const bookInput = {
+        title: formData.title,
+        author: formData.author,
+        year: parseInt(formData.year),
+        genre: formData.genre,
+        image: formData.image,
+        description: formData.description,
+        language: formData.language,
+      };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await updateBook({
+        variables: { 
+          updateBookId: id,
+          input: bookInput 
+        }
+      });
 
       // Navigate back to book list on success
       navigate("/books");
     } catch (error) {
       setErrors({ submit: "Failed to update book. Please try again." });
+      console.error("Error updating book:", error);
     } finally {
       setLoading(false);
     }

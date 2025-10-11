@@ -14,13 +14,36 @@ import { Add } from "@mui/icons-material";
 import { GET_BOOKS } from "../graphql/queries.js";
 import { useQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { DELETE_BOOK } from "../graphql/mutation";
+import BookCard from "../Components/BookCard.jsx";
 
 const BookGrid = () => {
   const { loading, error, data } = useQuery(GET_BOOKS);
   const navigate = useNavigate();
+  const [deleteBook] = useMutation(DELETE_BOOK, {
+    refetchQueries: [{ query: GET_BOOKS }],
+  });
   
   const handleBookView = (id) => {
     navigate(`/books/view/${id}`);
+  };
+
+  const handleEditBook = (id) => {
+    navigate(`/books/edit/${id}`);
+  };
+
+  const handleDeleteBook = async (id) => {
+    if (window.confirm('Are you sure you want to delete this book?')) {
+      try {
+        await deleteBook({
+          variables: { deleteBookId: id }
+        });
+      } catch (error) {
+        console.error('Error deleting book:', error);
+        alert('Failed to delete book. Please try again.');
+      }
+    }
   };
   return (
     <Box
@@ -81,83 +104,18 @@ const BookGrid = () => {
                   width="360px"
                   onClick={() => handleBookView(book.id)}
                 >
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      cursor: "pointer",
-                      transition: "transform 0.2s, box-shadow 0.2s",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: 4,
-                      },
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="240"
-                      image={
-                        book.image ||
-                        "https://via.placeholder.com/300x240?text=No+Image"
-                      }
-                      alt={book.title}
-                      sx={{ objectFit: "cover" }}
-                    />
-                    <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-                      <Typography
-                        variant="h6"
-                        component="h3"
-                        gutterBottom
-                        noWrap
-                      >
-                        {book.title}
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        by {book.author}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mb: 2, minHeight: "40px" }}
-                      >
-                        {book.description}
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 1,
-                        }}
-                      >
-                        <Chip
-                          label={book.genre}
-                          size="small"
-                          variant="outlined"
-                        />
-                        <Typography variant="body2">{book.year}</Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Chip
-                          label={book.language}
-                          color="primary"
-                          size="small"
-                          variant="outlined"
-                        />
-                      </Box>
-                    </CardContent>
-                  </Card>
+                  <BookCard
+                    id={book.id}
+                    title={book.title}
+                    author={book.author}
+                    year={book.year}
+                    genre={book.genre}
+                    image={book.image}
+                    description={book.description}
+                    language={book.language}
+                    onEdit={handleEditBook}
+                    onDelete={handleDeleteBook}
+                  />
                 </Grid>
               ))}
             </Grid>

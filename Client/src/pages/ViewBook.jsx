@@ -16,7 +16,8 @@ import {
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { GET_BOOK_BY_ID } from "../graphql/queries";
-import { useQuery } from "@apollo/client";
+import { DELETE_BOOK } from "../graphql/mutation";
+import { useQuery, useMutation } from "@apollo/client";
 import { useParams, useNavigate } from "react-router-dom";
 
 const ViewBook = () => {
@@ -26,15 +27,25 @@ const ViewBook = () => {
     variables: { getBookByIdId: id },
     skip: !id,
   });
+  const [deleteBook] = useMutation(DELETE_BOOK);
 
   // Handler functions
   const handleEdit = (id) => {
     navigate(`/books/edit/${id}`);
   };
 
-  const handleDelete = () => {
-    console.log("Delete book clicked");
-    // Add delete functionality with confirmation
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this book?')) {
+      try {
+        await deleteBook({
+          variables: { deleteBookId: id }
+        });
+        navigate('/books');
+      } catch (error) {
+        console.error('Error deleting book:', error);
+        alert('Failed to delete book. Please try again.');
+      }
+    }
   };
 
   if (loading) {

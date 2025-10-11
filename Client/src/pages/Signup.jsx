@@ -22,11 +22,14 @@ import {
   Person,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { CREATE_USER } from "../graphql/mutation";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [createUser] = useMutation(CREATE_USER);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -93,16 +96,22 @@ const Signup = () => {
     setLoading(true);
     
     try {
-      // TODO: Implement actual signup logic here
-      console.log("Signup data:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const userInput = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      };
+
+      await createUser({
+        variables: { input: userInput }
+      });
       
       // Navigate to login page on successful signup
       navigate("/login");
     } catch (error) {
       setErrors({ submit: "Signup failed. Please try again." });
+      console.error("Error creating user:", error);
     } finally {
       setLoading(false);
     }
