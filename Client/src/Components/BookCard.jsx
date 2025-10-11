@@ -26,10 +26,15 @@ const BookCard = ({
   onDelete,
 }) => {
   const navigate = useNavigate();
-  
+
   const handleEdit = (e) => {
-    e.stopPropagation(); // Prevent card click event
+    e.stopPropagation();
     navigate(`/books/edit/${id}`);
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete(id);
   };
   return (
     <Card
@@ -93,7 +98,6 @@ const BookCard = ({
         </Box>
       </CardContent>
 
-      {/* Action Buttons */}
       <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 2 }}>
         <Button
           size="small"
@@ -107,10 +111,7 @@ const BookCard = ({
         <Button
           size="small"
           startIcon={<Delete />}
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent card click event
-            onDelete && onDelete(id);
-          }}
+          onClick={handleDelete}
           variant="outlined"
           color="error"
         >

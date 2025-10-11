@@ -37,7 +37,7 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -73,14 +73,11 @@ const Login = () => {
     setLoading(true);
     
     try {
-      // TODO: Implement actual login logic here
       console.log("Login data:", formData);
       
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Navigate to home page on successful login
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       setErrors({ submit: "Login failed. Please try again." });
     } finally {

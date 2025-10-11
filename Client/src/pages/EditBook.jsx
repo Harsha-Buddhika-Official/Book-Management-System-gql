@@ -53,7 +53,6 @@ const EditBook = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // Update form data when GraphQL query completes
   useEffect(() => {
     if (data && data.getBookById) {
       const book = data.getBookById;
@@ -75,7 +74,6 @@ const EditBook = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -140,8 +138,6 @@ const EditBook = () => {
           input: bookInput 
         }
       });
-
-      // Navigate back to book list on success
       navigate("/books");
     } catch (error) {
       setErrors({ submit: "Failed to update book. Please try again." });
@@ -331,7 +327,6 @@ const EditBook = () => {
                 </Box>
               </Grid>
 
-              {/* Book Information */}
               <Grid item xs={12} md={8}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -465,7 +460,6 @@ const EditBook = () => {
               </Grid>
             </Grid>
 
-            {/* Action Buttons */}
             <Box
               sx={{
                 display: "flex",

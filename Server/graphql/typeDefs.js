@@ -7,6 +7,11 @@ export const typeDefs = gql`
     password: String!
     confirmPassword: String!
   }
+  
+  input inputUser{
+    email: String
+    password: String
+  }
 
   input createBookInput {
     title: String!
@@ -31,6 +36,7 @@ export const typeDefs = gql`
   type Mutation {
     createUser(input: createUserInput): user
     createBook(input: createBookInput): book
+    loginUser(input: inputUser): user
     updateBook(id: ID!, input: updateBookInput): book
     deleteBook(id: ID!): book
   }

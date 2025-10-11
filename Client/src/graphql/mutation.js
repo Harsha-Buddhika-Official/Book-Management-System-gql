@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client";
 
+export const CREATE_USER = gql`
+  mutation CreateUser($input: createUserInput!) {
+    createUser(input: $input) {
+      id
+      name
+      email
+    }
+  }
+`;
+
 export const ADD_BOOK = gql`
   mutation CreateBook($input: createBookInput!) {
     createBook(input: $input) {
@@ -26,16 +36,6 @@ export const UPDATE_BOOK = gql`
       image
       description
       language
-    }
-  }
-`;
-
-export const CREATE_USER = gql`
-  mutation CreateUser($input: createUserInput!) {
-    createUser(input: $input) {
-      id
-      name
-      email
     }
   }
 `;

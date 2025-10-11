@@ -7,10 +7,12 @@ export const resolvers = {
       const users = await User.find();
       return users;
     },
+
     getBooks: async () => {
       const books = await Book.find();
       return books;
     },
+
     getUserById: async (_, args) => {
       const user = await User.findById(args.id);
       if (!user) {
@@ -18,6 +20,7 @@ export const resolvers = {
       }
       return user;
     },
+
     getBookById: async (_, args) => {
       const book = await Book.findById(args.id);
       if (!book) {
@@ -42,6 +45,19 @@ export const resolvers = {
       const savedUser = await newUser.save();
       return savedUser;
     },
+
+    loginUser: async (_, args) => {
+      const { email, password } = args.input;
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error("invalid Email or Password");
+      }
+      if (user.password !== password) {
+        throw new Error("invalid Email or Password");
+      }
+      return user;
+    },
+
     createBook: async (_, args) => {
       const book = args.input;
 
@@ -57,6 +73,7 @@ export const resolvers = {
       const saveBook = await newBook.save();
       return saveBook;
     },
+
     updateBook: async (_, { id, input }) => {
       const updatedBook = await Book.findByIdAndUpdate(id, input, {
         new: true,
@@ -66,7 +83,8 @@ export const resolvers = {
       }
       return updatedBook;
     },
-    deleteBook: async (_, {id}) => {
+
+    deleteBook: async (_, { id }) => {
       const deletedBook = await Book.findByIdAndDelete(id);
       if (!deletedBook) {
         throw new Error("Book not found");

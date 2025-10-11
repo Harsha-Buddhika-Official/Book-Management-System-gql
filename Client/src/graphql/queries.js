@@ -11,6 +11,16 @@ export const GET_USERS = gql`
   }
 `;
 
+export const GET_USER_BY_ID = gql`
+  query GetUserById($getUserByIdId: ID!) {
+    getUserById(id: $getUserByIdId) {
+      id
+      name
+      email
+    }
+  }
+`;
+
 export const GET_BOOKS = gql`
   query Query {
     getBooks {
@@ -36,16 +46,6 @@ export const GET_BOOK_BY_ID = gql`
       image
       description
       language
-    }
-  }
-`;
-
-export const GET_USER_BY_ID = gql`
-  query GetUserById($getUserByIdId: ID!) {
-    getUserById(id: $getUserByIdId) {
-      id
-      name
-      email
     }
   }
 `;
