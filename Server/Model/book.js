@@ -27,6 +27,11 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  enterTime: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
 });
 
 export const Book = mongoose.model("Book", bookSchema)

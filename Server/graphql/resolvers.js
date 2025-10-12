@@ -69,6 +69,7 @@ export const resolvers = {
         image: book.image,
         description: book.description,
         language: book.language,
+        enterTime: book.enterTime || new Date(),
       });
       const saveBook = await newBook.save();
       return saveBook;

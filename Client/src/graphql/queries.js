@@ -32,6 +32,7 @@ export const GET_BOOKS = gql`
       image
       description
       language
+      enterTime
     }
   }
 `;
@@ -46,6 +47,7 @@ export const GET_BOOK_BY_ID = gql`
       image
       description
       language
+      enterTime
     }
   }
 `;

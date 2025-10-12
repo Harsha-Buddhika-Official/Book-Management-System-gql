@@ -22,7 +22,6 @@ const BookCard = ({
   description,
   language,
   id,
-  onEdit,
   onDelete,
 }) => {
   const navigate = useNavigate();

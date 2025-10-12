@@ -21,6 +21,7 @@ export const typeDefs = gql`
     image: String
     description: String
     language: String
+    enterTime: String
   }
 
   input updateBookInput {
@@ -57,6 +58,7 @@ export const typeDefs = gql`
     image: String
     description: String
     language: String
+    enterTime: String
   }
 
   type Query {

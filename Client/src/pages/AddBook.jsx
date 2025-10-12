@@ -30,7 +30,6 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { ADD_BOOK } from "../graphql/mutation";
 import { GET_BOOKS } from "../graphql/queries";
-import { bookGenres, bookLanguages } from "../data/booksData";
 
 const AddBook = () => {
   const navigate = useNavigate();
@@ -146,6 +145,7 @@ const AddBook = () => {
         image: formData.image,
         description: formData.description,
         language: formData.language,
+        enterTime: new Date().toISOString(),
       };
 
       await addBook({

@@ -20,6 +20,8 @@ import {
   Lock,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { LOGIN_USER } from "../graphql/mutation";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,59 +31,68 @@ const Login = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+
+  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+    onCompleted: (data) => {
+      localStorage.setItem("user", JSON.stringify(data.loginUser));
+      localStorage.setItem("isLoggedIn", "true");
+      navigate("/home");
+    },
+    onError: (error) => {
+      setErrors({ submit: error.message });
+    },
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
-    setLoading(true);
-    
+
     try {
-      console.log("Login data:", formData);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      navigate("/home");
+      await loginUser({
+        variables: {
+          inputs: {
+            email: formData.email,
+            password: formData.password,
+          },
+        },
+      });
     } catch (error) {
-      setErrors({ submit: "Login failed. Please try again." });
-    } finally {
-      setLoading(false);
+      console.error(`Error: ${error}`);
     }
   };
 

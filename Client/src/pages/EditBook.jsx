@@ -28,7 +28,6 @@ import {
   PhotoCamera,
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
-import { bookGenres, bookLanguages } from "../data/booksData";
 import { GET_BOOK_BY_ID } from "../graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
 import { UPDATE_BOOK } from "../graphql/mutation";
@@ -36,11 +35,47 @@ import { UPDATE_BOOK } from "../graphql/mutation";
 const EditBook = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [load, setLoading] = useState(false);
   const { loading, error, data } = useQuery(GET_BOOK_BY_ID, {
     variables: { getBookByIdId: id },
     skip: !id,
   });
+
+  const bookGenres = [
+    "Fiction",
+    "Non-Fiction",
+    "Mystery",
+    "Romance",
+    "Science Fiction",
+    "Fantasy",
+    "Biography",
+    "History",
+    "Self-Help",
+    "Business",
+    "Technology",
+    "Health",
+    "Travel",
+    "Children",
+    "Young Adult",
+    "Poetry",
+    "Drama",
+    "Comedy",
+    "Horror",
+    "Thriller",
+    "Dystopian",
+  ];
+  const bookLanguages = [
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese",
+    "Japanese",
+    "Chinese",
+    "Korean",
+    "Russian",
+    "Arabic",
+  ];
 
   const [formData, setFormData] = useState({
     title: "",
@@ -119,31 +154,30 @@ const EditBook = () => {
 
     if (!validateForm()) return;
 
-    setLoading(true);
+    // Clear any existing errors
+    setErrors({});
+
+    const bookInput = {
+      title: formData.title,
+      author: formData.author,
+      year: parseInt(formData.year),
+      genre: formData.genre,
+      image: formData.image,
+      description: formData.description,
+      language: formData.language,
+    };
 
     try {
-      const bookInput = {
-        title: formData.title,
-        author: formData.author,
-        year: parseInt(formData.year),
-        genre: formData.genre,
-        image: formData.image,
-        description: formData.description,
-        language: formData.language,
-      };
-
       await updateBook({
         variables: { 
           updateBookId: id,
           input: bookInput 
         }
       });
-      navigate("/books");
+      // Navigation and success handling is done in onCompleted callback
     } catch (error) {
-      setErrors({ submit: "Failed to update book. Please try again." });
+      // Error handling is done in onError callback
       console.error("Error updating book:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -151,8 +185,14 @@ const EditBook = () => {
     navigate(-1);
   };
 
-  const [updateBook, { loading: updating, error: updateError }] =
-    useMutation(UPDATE_BOOK);
+  const [updateBook, { loading: updating, error: updateError }] = useMutation(UPDATE_BOOK, {
+    onCompleted: () => {
+      navigate("/books");
+    },
+    onError: (error) => {
+      setErrors({ submit: error.message });
+    }
+  });
   if (loading) {
     return (
       <Box
@@ -270,6 +310,12 @@ const EditBook = () => {
         {errors.submit && (
           <Alert severity="error" sx={{ mb: 3 }}>
             {errors.submit}
+          </Alert>
+        )}
+
+        {updateError && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {updateError.message}
           </Alert>
         )}
 
@@ -471,16 +517,16 @@ const EditBook = () => {
                 borderColor: "divider",
               }}
             >
-              <Button variant="outlined" onClick={handleCancel} disabled={load}>
+              <Button variant="outlined" onClick={handleCancel} disabled={updating}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="contained"
                 startIcon={<Save />}
-                disabled={load}
+                disabled={updating}
               >
-                {load ? "Updating Book..." : "Update Book"}
+                {updating ? "Updating Book..." : "Update Book"}
               </Button>
             </Box>
           </Box>

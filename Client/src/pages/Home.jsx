@@ -9,6 +9,7 @@ import {
   Paper,
   Avatar,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import {
   MenuBook,
@@ -22,10 +23,16 @@ import {
   Search,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_BOOKS, GET_USERS } from "../graphql/queries";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 
 const Home = () => {
   const navigate = useNavigate();
+  
+  // Fetch books and users data
+  const { data: booksData, loading: booksLoading } = useQuery(GET_BOOKS);
+  const { data: usersData, loading: usersLoading } = useQuery(GET_USERS);
 
   const features = [
     {
@@ -44,13 +51,95 @@ const Home = () => {
     },
   ];
 
-  const stats = [
-    { label: "Total Books", value: "1,234", icon: <LibraryBooks /> },
-    { label: "Authors", value: "89", icon: <Person /> },
-    { label: "Categories", value: "23", icon: <MenuBook /> },
-    { label: "Recent Additions", value: "12", icon: <TrendingUp /> },
-    { label: "Active Users", value: "1", icon: <PeopleOutlineIcon /> },
-  ];
+  // Calculate statistics from real data
+  const calculateStats = () => {
+    if (booksLoading || usersLoading || !booksData || !usersData) {
+      return [
+        { label: "Total Books", value: "...", icon: <LibraryBooks /> },
+        { label: "Authors", value: "...", icon: <Person /> },
+        { label: "Categories", value: "...", icon: <MenuBook /> },
+        { label: "Recent Additions", value: "...", icon: <TrendingUp /> },
+        { label: "Active Users", value: "...", icon: <PeopleOutlineIcon /> },
+      ];
+    }
+
+    const books = booksData.getBooks || [];
+    
+    // Debug: Log books data to see what we're getting
+    console.log("Books data for stats calculation:", books);
+    if (books.length > 0) {
+      console.log("Sample book enterTime:", books[0].enterTime);
+    }
+    const users = usersData.getUsers || [];
+    
+    // Get unique authors
+    const uniqueAuthors = new Set(
+      books.map(book => book.author).filter(author => author && author.trim())
+    );
+    
+    // Get unique genres/categories
+    const uniqueGenres = new Set(
+      books.map(book => book.genre).filter(genre => genre && genre.trim())
+    );
+    
+    // Calculate recent additions (books added in the last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentBooks = books.filter(book => {
+      // If enterTime exists, use it for filtering
+      if (book.enterTime) {
+        try {
+          const bookEnterDate = new Date(book.enterTime);
+          const isRecent = bookEnterDate >= thirtyDaysAgo;
+          console.log(`Book "${book.title}" enterTime: ${book.enterTime}, isRecent: ${isRecent}`);
+          return isRecent;
+        } catch (error) {
+          console.warn('Invalid enterTime format for book:', book.id);
+          return false;
+        }
+      }
+      
+      // Fallback: if no enterTime, consider books from current year as "recent"
+      // This helps with existing books that don't have enterTime
+      const currentYear = new Date().getFullYear();
+      const isRecentYear = book.year === currentYear;
+      console.log(`Book "${book.title}" has no enterTime, using year ${book.year}, isRecentYear: ${isRecentYear}`);
+      return isRecentYear;
+    });
+    
+    console.log(`Total books: ${books.length}, Recent books: ${recentBooks.length}`);
+
+    return [
+      { 
+        label: "Total Books", 
+        value: books.length.toString(), 
+        icon: <LibraryBooks /> 
+      },
+      { 
+        label: "Authors", 
+        value: uniqueAuthors.size.toString(), 
+        icon: <Person /> 
+      },
+      { 
+        label: "Categories", 
+        value: uniqueGenres.size.toString(), 
+        icon: <MenuBook /> 
+      },
+      { 
+        label: "Recent Additions", 
+        value: recentBooks.length.toString(), 
+        icon: <TrendingUp /> 
+      },
+      { 
+        label: "Active Users", 
+        value: users.length.toString(), 
+        icon: <PeopleOutlineIcon /> 
+      },
+    ];
+  };
+
+  const stats = calculateStats();
 
   return (
     <Box
@@ -141,9 +230,13 @@ const Home = () => {
                   >
                     {stat.icon}
                   </Avatar>
-                  <Typography variant="h4" fontWeight="bold" color="primary">
-                    {stat.value}
-                  </Typography>
+                  {booksLoading || usersLoading ? (
+                    <CircularProgress size={24} sx={{ my: 2 }} />
+                  ) : (
+                    <Typography variant="h4" fontWeight="bold" color="primary">
+                      {stat.value}
+                    </Typography>
+                  )}
                   <Typography variant="body2" color="text.secondary">
                     {stat.label}
                   </Typography>

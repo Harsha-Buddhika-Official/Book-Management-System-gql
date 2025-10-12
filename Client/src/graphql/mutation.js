@@ -9,6 +9,15 @@ export const CREATE_USER = gql`
     }
   }
 `;
+  export const LOGIN_USER = gql`
+    mutation inputUser($input: loginInput!){
+      loginUser(input: $input){
+      id
+      name
+      email
+      }
+    }
+  `
 
 export const ADD_BOOK = gql`
   mutation CreateBook($input: createBookInput!) {
@@ -21,6 +30,7 @@ export const ADD_BOOK = gql`
       image
       description
       language
+      enterTime
     }
   }
 `;
