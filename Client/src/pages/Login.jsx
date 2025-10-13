@@ -11,8 +11,16 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  Avatar,
+  Link,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { 
+  Visibility, 
+  VisibilityOff, 
+  Email, 
+  Lock, 
+  Login as LoginIcon 
+} from "@mui/icons-material";
 import { LOGIN_USER } from "../graphql/mutation";
 import { useAuth } from "../utils/AuthContext";
 
@@ -56,29 +64,67 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ mt: 8 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Login
-          </Typography>
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 64px)",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        display: "flex",
+        alignItems: "center",
+        py: 4,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={8}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <Box sx={{ textAlign: "center", mb: 3 }}>
+            <Avatar
+              sx={{
+                bgcolor: "primary.main",
+                width: 64,
+                height: 64,
+                margin: "0 auto 16px",
+              }}
+            >
+              <LoginIcon sx={{ fontSize: 32 }} />
+            </Avatar>
+            <Typography variant="h4" fontWeight="bold" gutterBottom>
+              Welcome Back
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Sign in to access your book collection
+            </Typography>
+          </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Email"
+              label="Email Address"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              margin="normal"
+              sx={{ mb: 3 }}
               required
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Email color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <TextField
@@ -88,9 +134,14 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               onChange={handleChange}
-              margin="normal"
+              sx={{ mb: 3 }}
               required
               InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Lock color="action" />
+                  </InputAdornment>
+                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -109,23 +160,31 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              size="large"
+              sx={{ mt: 3, mb: 3, py: 1.5 }}
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
 
-            <Button
-              fullWidth
-              variant="text"
-              onClick={() => navigate("/signup")}
-            >
-              Don't have an account? Sign up
-            </Button>
-          </form>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="body2" color="text.secondary">
+                Don't have an account?{" "}
+                <Link
+                  component="button"
+                  type="button"
+                  variant="body2"
+                  onClick={() => navigate("/signup")}
+                  sx={{ cursor: "pointer" }}
+                >
+                  Sign up here
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
