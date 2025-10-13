@@ -72,6 +72,9 @@ const Navbar = () => {
           >
             {isAuthenticated ? (
               <>
+                <Typography variant="body2" sx={{ mx: 2, opacity: 0.8 }}>
+                  Welcome, {user?.name}
+                </Typography>
                 <Button color="inherit" onClick={() => navigate("/home")}>
                   Home
                 </Button>
@@ -82,9 +85,6 @@ const Navbar = () => {
                 >
                   Books
                 </Button>
-                <Typography variant="body2" sx={{ mx: 2, opacity: 0.8 }}>
-                  Welcome, {user?.name}
-                </Typography>
                 <Button
                   color="inherit"
                   startIcon={<LogoutIcon />}
