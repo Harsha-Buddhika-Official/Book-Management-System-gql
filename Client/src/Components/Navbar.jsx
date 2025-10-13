@@ -40,10 +40,10 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
     handleMenuClose();
   };
-  
+
   return (
     <AppBar
       position="sticky"
@@ -63,7 +63,6 @@ const Navbar = () => {
             Book Management
           </Typography>
 
-          {/* Desktop Navigation */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -83,16 +82,7 @@ const Navbar = () => {
                 >
                   Books
                 </Button>
-                <Button
-                  color="inherit"
-                  onClick={() => navigate("/add-book")}
-                >
-                  Add Book
-                </Button>
-                <Typography 
-                  variant="body2" 
-                  sx={{ mx: 2, opacity: 0.8 }}
-                >
+                <Typography variant="body2" sx={{ mx: 2, opacity: 0.8 }}>
                   Welcome, {user?.name}
                 </Typography>
                 <Button
@@ -124,7 +114,6 @@ const Navbar = () => {
             )}
           </Box>
 
-          {/* Mobile Navigation */}
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -159,9 +148,7 @@ const Navbar = () => {
                       Welcome, {user?.name}
                     </Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>
-                    Logout
-                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
               ) : (
                 <>
