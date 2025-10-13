@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { client, ApolloProvider } from "./apollo.js";
+import { AuthProvider } from "./utils/AuthContext";
+import ProtectedRoute from "./Components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -31,24 +33,78 @@ function App() {
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
-            <main style={{ flex: 1 }}>
-              <Routes>
-                <Route path="/" element={<Login/>}/>
-                <Route path="/home" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/books" element={<BookGrid />} />
-                <Route path="/books/add" element={<AddBook />} />
-                <Route path="/books/edit/:id" element={<EditBook />} />
-                <Route path="/books/view/:id" element={<ViewBook />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
+        <AuthProvider>
+          <Router>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+              <Navbar />
+              <main style={{ flex: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route 
+                    path="/books" 
+                    element={
+                      <ProtectedRoute>
+                        <BookGrid />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/add-book" 
+                    element={
+                      <ProtectedRoute>
+                        <AddBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/books/add" 
+                    element={
+                      <ProtectedRoute>
+                        <AddBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/books/edit/:id" 
+                    element={
+                      <ProtectedRoute>
+                        <EditBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/edit-book/:id" 
+                    element={
+                      <ProtectedRoute>
+                        <EditBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/books/view/:id" 
+                    element={
+                      <ProtectedRoute>
+                        <ViewBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/view-book/:id" 
+                    element={
+                      <ProtectedRoute>
+                        <ViewBook />
+                      </ProtectedRoute>
+                    } 
+                  />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </Router>
+        </AuthProvider>
       </ThemeProvider>
     </ApolloProvider>
   );

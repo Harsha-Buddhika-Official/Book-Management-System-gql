@@ -22,9 +22,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { LOGIN_USER } from "../graphql/mutation";
+import { useAuth } from "../utils/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -32,10 +32,12 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
-      localStorage.setItem("user", JSON.stringify(data.loginUser));
-      localStorage.setItem("isLoggedIn", "true");
+      login(data.loginUser.token, data.loginUser.user);
       navigate("/home");
     },
     onError: (error) => {

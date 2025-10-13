@@ -24,12 +24,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../graphql/mutation";
+import { useAuth } from "../utils/AuthContext";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [createUser] = useMutation(CREATE_USER);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -37,84 +34,96 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [createUser, { loading }] = useMutation(CREATE_USER, {
+    onCompleted: (data) => {
+      login(data.createUser.token, data.createUser.user);
+      navigate("/");
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName) {
       newErrors.firstName = "First name is required";
     }
-    
+
     if (!formData.lastName) {
       newErrors.lastName = "Last name is required";
     }
-    
+
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
+
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setLoading(true);
-    
-    try {
-      const userInput = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-      };
 
-      await createUser({
-        variables: { input: userInput }
-      });
-      
-      // Navigate to login page on successful signup
-      navigate("/login");
-    } catch (error) {
-      setErrors({ submit: "Signup failed. Please try again." });
-      console.error("Error creating user:", error);
-    } finally {
-      setLoading(false);
+    if (!validateForm()) return;
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
     }
+
+    // Map the form data to match backend expectations
+    const userInput = {
+      name: `${formData.firstName} ${formData.lastName}`, // Backend expects 'name', not firstName/lastName
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+    };
+
+    createUser({
+      variables: {
+        input: userInput, // Use the mapped data instead of formData directly
+      },
+    });
   };
 
   return (
@@ -159,6 +168,12 @@ const Signup = () => {
           {errors.submit && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {errors.submit}
+            </Alert>
+          )}
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
             </Alert>
           )}
 
@@ -271,10 +286,16 @@ const Signup = () => {
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
                           edge="end"
                         >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -288,8 +309,8 @@ const Signup = () => {
               fullWidth
               variant="contained"
               size="large"
-              disabled={loading}
               sx={{ mt: 3, mb: 3, py: 1.5 }}
+              disabled={loading}
             >
               {loading ? "Creating Account..." : "Create Account"}
             </Button>

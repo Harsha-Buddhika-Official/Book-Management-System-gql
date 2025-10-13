@@ -1,28 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const GET_USERS = gql`
-  query GetUsers {
-    getUsers {
-      id
-      name
-      email
-      password
-    }
-  }
-`;
-
-export const GET_USER_BY_ID = gql`
-  query GetUserById($getUserByIdId: ID!) {
-    getUserById(id: $getUserByIdId) {
-      id
-      name
-      email
-    }
-  }
-`;
-
 export const GET_BOOKS = gql`
-  query Query {
+  query GetBooks {
     getBooks {
       id
       title
@@ -36,6 +15,7 @@ export const GET_BOOKS = gql`
     }
   }
 `;
+
 export const GET_BOOK_BY_ID = gql`
   query GetBookById($getBookByIdId: ID!) {
     getBookById(id: $getBookByIdId) {
@@ -52,11 +32,33 @@ export const GET_BOOK_BY_ID = gql`
   }
 `;
 
-export const DELETE_BOOK = gql`
-  mutation Mutation($deleteBookId: ID!) {
-    deleteBook(id: $deleteBookId) {
+export const GET_USER_BY_ID = gql`
+  query GetUserById($getUserByIdId: ID!) {
+    getUserById(id: $getUserByIdId) {
       id
-      title
+      name
+      email
+    }
+  }
+`;
+
+export const GET_USERS = gql`
+  query GetUsers {
+    getUsers {
+      id
+      name
+      email
+      password
+    }
+  }
+`;
+
+export const GET_ME = gql`
+  query Me {
+    me {
+      id
+      name
+      email
     }
   }
 `;

@@ -35,11 +35,16 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createUser(input: createUserInput): user
+    createUser(input: createUserInput): AuthPayload
     createBook(input: createBookInput): book
-    loginUser(input: inputUser): user
+    loginUser(input: inputUser): AuthPayload
     updateBook(id: ID!, input: updateBookInput): book
     deleteBook(id: ID!): book
+  }
+
+  type AuthPayload {
+    token: String!
+    user: user!
   }
 
   type user {
@@ -66,5 +71,6 @@ export const typeDefs = gql`
     getBooks: [book]
     getUserById(id: ID!): user!
     getBookById(id: ID!): book!
+    me: user
   }
 `;

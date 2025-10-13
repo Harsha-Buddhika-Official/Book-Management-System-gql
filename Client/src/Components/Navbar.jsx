@@ -13,13 +13,17 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import GridViewIcon from "@mui/icons-material/GridView";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../utils/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,6 +37,13 @@ const Navbar = () => {
     navigate(path);
     handleMenuClose();
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    handleMenuClose();
+  };
+  
   return (
     <AppBar
       position="sticky"
@@ -60,24 +71,57 @@ const Navbar = () => {
               gap: 1,
             }}
           >
-            <Button color="inherit" onClick={() => navigate("/home")}>
-              Home
-            </Button>
-            <Button
-              color="inherit"
-              startIcon={<GridViewIcon />}
-              onClick={() => navigate("/books")}
-            >
-              Books
-            </Button>
-            <Button
-              color="inherit"
-              startIcon={<LogoutIcon />}
-              sx={{ ml: 1 }}
-              onClick={() => navigate("/login")}
-            >
-              Logout
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button color="inherit" onClick={() => navigate("/home")}>
+                  Home
+                </Button>
+                <Button
+                  color="inherit"
+                  startIcon={<GridViewIcon />}
+                  onClick={() => navigate("/books")}
+                >
+                  Books
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => navigate("/add-book")}
+                >
+                  Add Book
+                </Button>
+                <Typography 
+                  variant="body2" 
+                  sx={{ mx: 2, opacity: 0.8 }}
+                >
+                  Welcome, {user?.name}
+                </Typography>
+                <Button
+                  color="inherit"
+                  startIcon={<LogoutIcon />}
+                  sx={{ ml: 1 }}
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  color="inherit"
+                  startIcon={<LoginIcon />}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Button>
+                <Button
+                  color="inherit"
+                  startIcon={<PersonAddIcon />}
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </Box>
 
           {/* Mobile Navigation */}
@@ -99,18 +143,36 @@ const Navbar = () => {
                 "aria-labelledby": "basic-button",
               }}
             >
-              <MenuItem onClick={() => handleNavigate("/home")}>
-                Home
-              </MenuItem>
-              <MenuItem onClick={() => handleNavigate("/books")}>
-                Books
-              </MenuItem>
-              <MenuItem onClick={() => handleNavigate("/login")}>
-                Logout
-              </MenuItem>
-              <MenuItem onClick={() => handleNavigate("/signup")}>
-                Sign Up
-              </MenuItem>
+              {isAuthenticated ? (
+                <>
+                  <MenuItem onClick={() => handleNavigate("/home")}>
+                    Home
+                  </MenuItem>
+                  <MenuItem onClick={() => handleNavigate("/books")}>
+                    Books
+                  </MenuItem>
+                  <MenuItem onClick={() => handleNavigate("/add-book")}>
+                    Add Book
+                  </MenuItem>
+                  <MenuItem disabled>
+                    <Typography variant="caption">
+                      Welcome, {user?.name}
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    Logout
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={() => handleNavigate("/login")}>
+                    Login
+                  </MenuItem>
+                  <MenuItem onClick={() => handleNavigate("/signup")}>
+                    Sign Up
+                  </MenuItem>
+                </>
+              )}
             </Menu>
           </Box>
         </Toolbar>
