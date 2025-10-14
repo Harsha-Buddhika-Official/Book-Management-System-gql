@@ -1,6 +1,7 @@
 import { Book } from "../Model/book.js";
 import { User } from "../Model/user.js";
 import jwt from "jsonwebtoken";
+import bcrypt from 'bcryptjs'
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -63,11 +64,11 @@ export const resolvers = {
       if (existingUser) {
         throw new Error("User with this email already exists");
       }
-
+      const hashedPassword = await bcrypt.hash(userInput.password, 10)
       const newUser = new User({
         name: userInput.name,
         email: userInput.email,
-        password: userInput.password,
+        password: hashedPassword,
       });
 
       const savedUser = await newUser.save();
@@ -87,9 +88,15 @@ export const resolvers = {
         throw new Error("invalid Email or Password");
       }
 
-      if (user.password !== password) {
-        throw new Error("invalid Email or Password");
-      }
+      // const hashedPassword = await bcrypt.hash(password, 10)
+      // if (user.password !== hashedPassword) {
+      //   throw new Error("invalid Email or Password");
+      // }
+
+    const valid = await bcrypt.compare(password, user.password)
+    if (!valid) {
+      throw new Error('Invalid credentials')
+    }
 
       const token = generateToken(user._id);
 
